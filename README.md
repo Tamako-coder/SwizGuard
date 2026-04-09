@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/swizguard-logo.png" alt="SwizGuard — fight back for privacy that's yours" width="600">
+</p>
+
 # SwizGuard
 
 Self-hosted stealth VPN. Your traffic looks like normal HTTPS to a major website. Your ISP has no idea you're tunneling anything. Works on Mac, Linux, Windows, iPhone, and Android. One command deploys the server, another spits out configs for every device you own.
