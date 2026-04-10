@@ -126,19 +126,28 @@ ok "WireGuard configured on :$WG_PORT"
 
 info "Installing Xray-core..."
 
-XRAY_VERSION=$(curl -s "https://api.github.com/repos/XTLS/Xray-core/releases/latest" | grep '"tag_name"' | cut -d'"' -f4)
-[ -z "$XRAY_VERSION" ] && fail "Could not fetch Xray version"
-info "Xray version: $XRAY_VERSION"
+cd /tmp || exit
+rm -f Xray-linux-${XRAY_ARCH}.zip
 
-XRAY_URL="https://github.com/XTLS/Xray-core/releases/download/${XRAY_VERSION}/Xray-linux-${XRAY_ARCH}.zip"
-cd /tmp
-curl -sLO "$XRAY_URL"
-unzip -qo "Xray-linux-${XRAY_ARCH}.zip" -d /usr/local/bin/xray-tmp
+XRAY_URL="https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-${XRAY_ARCH}.zip"
+
+info "Downloading Xray from: $XRAY_URL"
+
+curl -L --fail -o "Xray-linux-${XRAY_ARCH}.zip" "$XRAY_URL" \
+    || fail "Download failed (GitHub blocked or rate-limited)"
+
+file "Xray-linux-${XRAY_ARCH}.zip" | grep -q "Zip archive" \
+    || fail "Downloaded file is not a valid zip (likely blocked)"
+
+unzip -qo "Xray-linux-${XRAY_ARCH}.zip" -d /usr/local/bin/xray-tmp \
+    || fail "Unzip failed"
+
 mv /usr/local/bin/xray-tmp/xray /usr/local/bin/xray
 chmod +x /usr/local/bin/xray
+
 rm -rf /usr/local/bin/xray-tmp "Xray-linux-${XRAY_ARCH}.zip"
 
-ok "Xray-core installed at /usr/local/bin/xray"
+ok "Xray-core installed"
 
 # ─── Generate REALITY keys ───────────────────────────────────────
 
